@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const BadgeSchema = new mongoose.Schema({
   name: String,
@@ -27,6 +27,6 @@ const UserSchema = new mongoose.Schema({
   lastLoginAt: Date
 }, { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } });
 
-module.exports = mongoose.model('User', UserSchema);
+export default mongoose.model('User', UserSchema);
 
 

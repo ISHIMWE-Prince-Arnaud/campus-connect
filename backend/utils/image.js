@@ -1,4 +1,4 @@
-function isValidImageUrl(url) {
+export function isValidImageUrl(url) {
   if (!url) return true;
   try {
     const u = new URL(url);
@@ -8,6 +8,5 @@ function isValidImageUrl(url) {
     return false;
   }
 }
-module.exports = { isValidImageUrl };
 
 

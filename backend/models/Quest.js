@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const SubmissionSchema = new mongoose.Schema({
   team: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
@@ -18,6 +18,6 @@ const QuestSchema = new mongoose.Schema({
   submissions: { type: [SubmissionSchema], default: [] }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Quest', QuestSchema);
+export default mongoose.model('Quest', QuestSchema);
 
 

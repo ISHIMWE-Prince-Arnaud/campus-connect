@@ -1,13 +1,12 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const sanitize = require('mongo-sanitize');
-const { registerSchema, loginSchema } = require('../utils/validation');
-const { jwtSecret } = require('../utils/config');
-const User = require('../models/User');
-const { awardPointsToUser, POINTS } = require('../services/pointsService');
+import { Router } from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import sanitize from 'mongo-sanitize';
+import { registerSchema, loginSchema } from '../utils/validation.js';
+import User from '../models/User.js';
+import { awardPointsToUser, POINTS } from '../services/pointsService.js';
 
-const router = express.Router();
+const router = Router();
 
 router.post('/register', async (req, res) => {
   try {
@@ -23,7 +22,7 @@ router.post('/register', async (req, res) => {
       gender: value.gender,
       avatarUrl: value.avatarUrl || ''
     });
-    const token = jwt.sign({ id: doc._id }, jwtSecret, { expiresIn: '7d' });
+    const token = jwt.sign({ id: doc._id }, process.env.jwtSecret, { expiresIn: '7d' });
     await awardPointsToUser(doc._id, POINTS.STREAK_LOGIN, 'Join bonus');
     res.json({ token, user: { id: doc._id, username: doc.username, displayName: doc.displayName, roles: doc.roles, points: doc.points } });
   } catch (e) {
@@ -40,7 +39,7 @@ router.post('/login', async (req, res) => {
     if (!ok) return res.status(400).json({ error: 'Invalid credentials' });
     user.lastLoginAt = new Date();
     await user.save();
-    const token = jwt.sign({ id: user._id }, jwtSecret, { expiresIn: '7d' });
+    const token = jwt.sign({ id: user._id }, process.env.jwtSecret, { expiresIn: '7d' });
     res.json({ token, user: { id: user._id, username: user.username, displayName: user.displayName, roles: user.roles, points: user.points } });
   } catch (e) {
     res.status(400).json({ error: e.message });
@@ -52,7 +51,7 @@ router.get('/me', async (req, res) => {
     const header = req.headers.authorization || '';
     const token = header.startsWith('Bearer ') ? header.slice(7) : null;
     if (!token) return res.status(401).json({ error: 'Unauthorized' });
-    const payload = jwt.verify(token, jwtSecret);
+    const payload = jwt.verify(token, process.env.jwtSecret);
     const user = await User.findById(payload.id);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
     res.json({ id: user._id, username: user.username, displayName: user.displayName, roles: user.roles, points: user.points });
@@ -61,6 +60,6 @@ router.get('/me', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
 
 

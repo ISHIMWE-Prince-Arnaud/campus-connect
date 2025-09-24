@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
-const bcrypt = require('bcryptjs');
-const { connectDb } = require('../server/utils/db');
-const User = require('../server/models/User');
-const Post = require('../server/models/Post');
-const Chat = require('../server/models/Chat');
-const Message = require('../server/models/Message');
-const Quest = require('../server/models/Quest');
+import bcrypt from 'bcryptjs';
+import { connectDb } from '../server/utils/db.js';
+import User from '../server/models/User.js';
+import Post from '../server/models/Post.js';
+import Chat from '../server/models/Chat.js';
+import Message from '../server/models/Message.js';
+import Quest from '../server/models/Quest.js';
 
 async function main() {
   await connectDb();
@@ -96,5 +96,6 @@ async function main() {
 }
 
 main().catch(e => { console.error(e); process.exit(1); });
+
 
 

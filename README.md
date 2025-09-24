@@ -5,7 +5,7 @@ Safe, fun, cross-group interaction via meme wall, gamified quests, points, badge
 ## Prerequisites
 - Node.js 18+ and npm
 - MongoDB Atlas (or local MongoDB)
-- Ports used: 4000 (server), 5173 (web)
+- Ports used: 5000 (server), 5173 (web)
 
 ## Quick Start
 
@@ -93,5 +93,3 @@ See docker-compose.yml for local dev with Mongo + hot reload.
 - Set strong JWT_SECRET.
 - Use a production MongoDB cluster.
 - Consider adding Cloudinary for uploads (stubbed).
-
-

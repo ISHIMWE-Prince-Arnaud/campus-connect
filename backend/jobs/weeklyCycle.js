@@ -1,10 +1,10 @@
-const cron = require('node-cron');
-const User = require('../models/User');
-const Quest = require('../models/Quest');
-const { pairStudentsPreferCrossGender } = require('../services/pairingService');
-const { assignMysteryPairs } = require('../services/questsService');
+import cron from 'node-cron';
+import User from '../models/User.js';
+import Quest from '../models/Quest.js';
+import { pairStudentsPreferCrossGender } from '../services/pairingService.js';
+import { assignMysteryPairs } from '../services/questsService.js';
 
-function startWeeklyCycle(io) {
+export function startWeeklyCycle(io) {
   // Monday 08:00
   cron.schedule('0 8 * * 1', async () => {
     try {
@@ -46,7 +46,6 @@ function startWeeklyCycle(io) {
         const sorted = [...q.submissions].sort((a, b) => (b.votes?.length || 0) - (a.votes?.length || 0));
         const winner = sorted[0];
         if (winner) {
-          // Assign titles/badges for one week to winners
           const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
           await User.updateMany({ _id: { $in: winner.team } }, {
             $push: {
@@ -65,7 +64,5 @@ function startWeeklyCycle(io) {
     }
   });
 }
-
-module.exports = { startWeeklyCycle };
 
 

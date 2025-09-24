@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const ChatSchema = new mongoose.Schema({
   type: { type: String, enum: ['pair','group'], required: true },
@@ -6,6 +6,4 @@ const ChatSchema = new mongoose.Schema({
   expiresAt: { type: Date, index: { expires: 0 } } // TTL
 }, { timestamps: true });
 
-module.exports = mongoose.model('Chat', ChatSchema);
-
-
+export default mongoose.model('Chat', ChatSchema);

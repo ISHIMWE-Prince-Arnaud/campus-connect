@@ -1,15 +1,11 @@
-const mongoose = require('mongoose');
-const { mongoUri } = require('./config');
+import mongoose from "mongoose";
 
-async function connectDb() {
+export async function connectDb() {
+  const mongoUri = process.env.MONGO_URI;
   if (!mongoUri) {
-    throw new Error('MONGO_URI is not set');
+    throw new Error("MONGO_URI is not set");
   }
-  mongoose.set('strictQuery', true);
+  mongoose.set("strictQuery", true);
   await mongoose.connect(mongoUri, { autoIndex: true });
   return mongoose;
 }
-
-module.exports = { connectDb };
-
-

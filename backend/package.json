@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "Campus Connect backend (Express + Mongo + Socket.IO + Cron)",
   "main": "index.js",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "test": "jest"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

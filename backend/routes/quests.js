@@ -1,10 +1,10 @@
-const express = require('express');
-const { authRequired } = require('../middleware/auth');
-const Quest = require('../models/Quest');
-const { submitSchema, voteSchema } = require('../utils/validation');
-const { submitQuest, voteSubmission } = require('../services/questsService');
+import { Router } from 'express';
+import { authRequired } from '../middleware/auth.js';
+import Quest from '../models/Quest.js';
+import { submitSchema, voteSchema } from '../utils/validation.js';
+import { submitQuest, voteSubmission } from '../services/questsService.js';
 
-const router = express.Router();
+const router = Router();
 
 router.get('/me', authRequired, async (req, res) => {
   const quests = await Quest.find({ participants: req.user._id, status: { $ne: 'archived' } });
@@ -31,6 +31,6 @@ router.post('/:questId/vote', authRequired, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
 
 

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const ReactionSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true },
@@ -20,6 +20,6 @@ const PostSchema = new mongoose.Schema({
   status: { type: String, enum: ['active','flagged','removed'], default: 'active' }
 }, { timestamps: { createdAt: 'createdAt' } });
 
-module.exports = mongoose.model('Post', PostSchema);
+export default mongoose.model('Post', PostSchema);
 
 

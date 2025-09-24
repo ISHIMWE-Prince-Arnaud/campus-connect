@@ -7,7 +7,7 @@ function shuffle(array) {
   return a;
 }
 
-function pairStudentsPreferCrossGender(users) {
+export function pairStudentsPreferCrossGender(users) {
   const males = users.filter(u => u.gender === 'male');
   const females = users.filter(u => u.gender === 'female');
   const others = users.filter(u => u.gender === 'other');
@@ -34,7 +34,7 @@ function pairStudentsPreferCrossGender(users) {
   return { pairs, unpaired: shuffledLeftover };
 }
 
-function groupStudents(users, size = 4) {
+export function groupStudents(users, size = 4) {
   const shuffled = shuffle(users);
   const groups = [];
   for (let i = 0; i < shuffled.length; i += size) {
@@ -42,7 +42,5 @@ function groupStudents(users, size = 4) {
   }
   return groups;
 }
-
-module.exports = { pairStudentsPreferCrossGender, groupStudents };
 
 

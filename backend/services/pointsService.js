@@ -1,6 +1,6 @@
-const User = require('../models/User');
+import User from '../models/User.js';
 
-const POINTS = {
+export const POINTS = {
   POST_CREATE: 5,
   POST_REACT: 1,
   QUEST_SUBMIT: 10,
@@ -10,16 +10,14 @@ const POINTS = {
   STREAK_LOGIN: 2
 };
 
-async function awardPointsToUser(userId, points, reason) {
+export async function awardPointsToUser(userId, points, reason) {
   await User.updateOne({ _id: userId }, { $inc: { points } });
   return { userId, points, reason };
 }
 
-async function awardPointsToUsers(userIds, points, reason) {
+export async function awardPointsToUsers(userIds, points, reason) {
   await User.updateMany({ _id: { $in: userIds } }, { $inc: { points } });
   return { userIds, points, reason };
 }
-
-module.exports = { POINTS, awardPointsToUser, awardPointsToUsers };
 
 

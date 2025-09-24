@@ -1,56 +1,57 @@
-const express = require('express');
-const http = require('http');
-const helmet = require('helmet');
-const cors = require('cors');
-const morgan = require('morgan');
-const sanitize = require('mongo-sanitize');
-const { connectDb } = require('./utils/db');
-const { port, clientOrigin } = require('./utils/config');
-const { apiLimiter, authLimiter } = require('./middleware/rateLimit');
-const { errorHandler } = require('./middleware/error');
-const { initSocket } = require('./socket');
-const { startWeeklyCycle } = require('./jobs/weeklyCycle');
+import dotenv from 'dotenv'
+dotenv.config();
 
-const authRoutes = require('./routes/auth');
-const postsRoutes = require('./routes/posts');
-const questsRoutes = require('./routes/quests');
-const chatsRoutes = require('./routes/chats');
-const leaderboardRoutes = require('./routes/leaderboard');
-const adminRoutes = require('./routes/admin');
-const healthRoutes = require('./routes/health');
+import express from 'express';
+import http from 'http';
+import helmet from 'helmet';
+import cors from 'cors';
+import morgan from 'morgan';
+import sanitize from 'mongo-sanitize';
+import { connectDb } from './utils/db.js';
+import { apiLimiter, authLimiter } from './middleware/rateLimit.js';
+import { errorHandler } from './middleware/error.js';
+import { initSocket } from './socket.js';
+import { startWeeklyCycle } from './jobs/weeklyCycle.js';
 
-(async () => {
-  await connectDb();
+import authRoutes from './routes/auth.js';
+import postsRoutes from './routes/posts.js';
+import questsRoutes from './routes/quests.js';
+import chatsRoutes from './routes/chats.js';
+import leaderboardRoutes from './routes/leaderboard.js';
+import adminRoutes from './routes/admin.js';
+import healthRoutes from './routes/health.js';
+import { configDotenv } from 'dotenv';
 
-  const app = express();
-  const server = http.createServer(app);
-  const io = initSocket(server);
-  app.set('io', io);
+const app = express();
+const server = http.createServer(app);
+const io = initSocket(server);
+const port = process.env.PORT || 5000;
 
-  app.use(helmet());
-  app.use(cors({ origin: clientOrigin, credentials: true }));
-  app.use(express.json({ limit: '1mb' }));
-  app.use(morgan('dev'));
-  app.use((req, _res, next) => {
-    // Basic anti-injection sanitation for JSON bodies
-    if (req.body && typeof req.body === 'object') {
-      req.body = sanitize(req.body);
-    }
-    next();
-  });
+app.set('io', io);
 
-  app.use('/api', apiLimiter);
-  app.use('/api/auth', authLimiter, authRoutes);
-  app.use('/api/posts', postsRoutes);
-  app.use('/api/quests', questsRoutes);
-  app.use('/api/chats', chatsRoutes);
-  app.use('/api/leaderboard', leaderboardRoutes);
-  app.use('/api/admin', adminRoutes);
-  app.use('/api', healthRoutes);
+app.use(helmet());
+app.use(cors({ origin: process.env.clientOrigin, credentials: true }));
+app.use(express.json({ limit: '1mb' }));
+app.use(morgan('dev'));
+app.use((req, _res, next) => {
+  if (req.body && typeof req.body === 'object') {
+    req.body = sanitize(req.body);
+  }
+  next();
+});
 
-  app.use(errorHandler);
+app.use('/api', apiLimiter);
+app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/posts', postsRoutes);
+app.use('/api/quests', questsRoutes);
+app.use('/api/chats', chatsRoutes);
+app.use('/api/leaderboard', leaderboardRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api', healthRoutes);
 
-  startWeeklyCycle(io);
+app.use(errorHandler);
 
-  server.listen(port, () => console.log(`Server listening on :${port}`));
-})();
+startWeeklyCycle(io);
+
+await connectDb().then(() => console.log('Connected to DB'));
+server.listen(port, () => console.log(`Server listening on port : ${port}`));

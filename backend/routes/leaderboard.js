@@ -1,13 +1,13 @@
-const express = require('express');
-const User = require('../models/User');
+import { Router } from 'express';
+import User from '../models/User.js';
 
-const router = express.Router();
+const router = Router();
 
 router.get('/weekly', async (req, res) => {
   const top = await User.find().sort({ points: -1 }).limit(10).select('username displayName avatarUrl points titles badges');
   res.json(top);
 });
 
-module.exports = router;
+export default router;
 
 

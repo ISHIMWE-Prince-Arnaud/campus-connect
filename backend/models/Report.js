@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const ReportSchema = new mongoose.Schema({
   targetType: { type: String, enum: ['post'], required: true },
@@ -8,6 +8,6 @@ const ReportSchema = new mongoose.Schema({
   status: { type: String, enum: ['open','closed'], default: 'open' }
 }, { timestamps: { createdAt: 'createdAt' } });
 
-module.exports = mongoose.model('Report', ReportSchema);
+export default mongoose.model('Report', ReportSchema);
 
 

@@ -1,8 +1,8 @@
-const Chat = require('../models/Chat');
-const Quest = require('../models/Quest');
-const { awardPointsToUsers, POINTS } = require('./pointsService');
+import Chat from '../models/Chat.js';
+import Quest from '../models/Quest.js';
+import { awardPointsToUsers, POINTS } from './pointsService.js';
 
-async function assignMysteryPairs(prompt, pairs, expiresAt, io) {
+export async function assignMysteryPairs(prompt, pairs, expiresAt, io) {
   const createdQuests = [];
   for (const pair of pairs) {
     const chat = await Chat.create({
@@ -28,7 +28,7 @@ async function assignMysteryPairs(prompt, pairs, expiresAt, io) {
   return createdQuests;
 }
 
-async function submitQuest(questId, userId, content, mediaUrl) {
+export async function submitQuest(questId, userId, content, mediaUrl) {
   const quest = await Quest.findById(questId);
   if (!quest) throw new Error('Quest not found');
   if (quest.status !== 'assigned' && quest.status !== 'submitted') throw new Error('Submissions closed');
@@ -44,7 +44,7 @@ async function submitQuest(questId, userId, content, mediaUrl) {
   return quest;
 }
 
-async function voteSubmission(questId, userId, submissionId) {
+export async function voteSubmission(questId, userId, submissionId) {
   const quest = await Quest.findById(questId);
   if (!quest) throw new Error('Quest not found');
   if (quest.status !== 'voting') throw new Error('Voting not open');
@@ -61,7 +61,5 @@ async function voteSubmission(questId, userId, submissionId) {
   await quest.save();
   return quest;
 }
-
-module.exports = { assignMysteryPairs, submitQuest, voteSubmission };
 
 

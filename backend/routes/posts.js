@@ -1,12 +1,12 @@
-const express = require('express');
-const sanitize = require('mongo-sanitize');
-const { authRequired } = require('../middleware/auth');
-const { createPostSchema, reactSchema, reportSchema } = require('../utils/validation');
-const { filterProfanity, validateMediaUrl } = require('../services/moderationService');
-const Post = require('../models/Post');
-const Report = require('../models/Report');
-const User = require('../models/User');
-const { awardPointsToUser, POINTS } = require('../services/pointsService');
+import { Router } from 'express';
+import sanitize from 'mongo-sanitize';
+import { authRequired } from '../middleware/auth.js';
+import { createPostSchema, reactSchema, reportSchema } from '../utils/validation.js';
+import { filterProfanity, validateMediaUrl } from '../services/moderationService.js';
+import Post from '../models/Post.js';
+import Report from '../models/Report.js';
+import User from '../models/User.js';
+import { awardPointsToUser, POINTS } from '../services/pointsService.js';
 
 function parseMentions(text) {
   const at = text.match(/@([a-zA-Z0-9_]+)/g) || [];
@@ -19,9 +19,8 @@ function applyReactionCounts(post) {
   post.reactionCounts = counts;
 }
 
-const router = express.Router();
+const router = Router();
 
-// GET paginated
 router.get('/', async (req, res) => {
   const page = Math.max(parseInt(req.query.page || '1', 10), 1);
   const pageSize = Math.min(Math.max(parseInt(req.query.pageSize || '20', 10), 1), 50);
@@ -33,7 +32,6 @@ router.get('/', async (req, res) => {
   res.json(posts);
 });
 
-// Create post
 router.post('/', authRequired, async (req, res) => {
   try {
     const value = await createPostSchema.validateAsync(req.body);
@@ -49,7 +47,6 @@ router.post('/', authRequired, async (req, res) => {
       mediaUrl: value.mediaUrl || '',
       mentions: mentionUsers.map(u => u._id)
     });
-    // populate author for immediate UI use
     post = await Post.findById(post._id).populate('author', 'username displayName avatarUrl points');
     await awardPointsToUser(req.user._id, POINTS.POST_CREATE, 'Create post');
     req.app.get('io').emit('post:reacted', { postId: String(post._id), reactionCounts: post.reactionCounts });
@@ -59,7 +56,6 @@ router.post('/', authRequired, async (req, res) => {
   }
 });
 
-// React
 router.post('/:id/react', authRequired, async (req, res) => {
   try {
     const { type } = await reactSchema.validateAsync(req.body);
@@ -82,7 +78,6 @@ router.post('/:id/react', authRequired, async (req, res) => {
   }
 });
 
-// Report
 router.post('/:id/report', authRequired, async (req, res) => {
   try {
     const { reason } = await reportSchema.validateAsync(req.body);
@@ -102,13 +97,12 @@ router.post('/:id/report', authRequired, async (req, res) => {
   }
 });
 
-// Single
 router.get('/:id', async (req, res) => {
   const post = await Post.findById(req.params.id).populate('author', 'username displayName avatarUrl');
   if (!post || post.status === 'removed') return res.status(404).json({ error: 'Not found' });
   res.json(post);
 });
 
-module.exports = router;
+export default router;
 
 

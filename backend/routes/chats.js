@@ -1,10 +1,10 @@
-const express = require('express');
-const { authRequired } = require('../middleware/auth');
-const Chat = require('../models/Chat');
-const Message = require('../models/Message');
-const { messageSchema } = require('../utils/validation');
+import { Router } from 'express';
+import { authRequired } from '../middleware/auth.js';
+import Chat from '../models/Chat.js';
+import Message from '../models/Message.js';
+import { messageSchema } from '../utils/validation.js';
 
-const router = express.Router();
+const router = Router();
 
 router.get('/:chatId', authRequired, async (req, res) => {
   const chat = await Chat.findById(req.params.chatId);
@@ -37,6 +37,6 @@ router.post('/:chatId/message', authRequired, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
 
 

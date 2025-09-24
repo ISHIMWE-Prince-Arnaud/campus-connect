@@ -1,10 +1,10 @@
-const express = require('express');
-const { authRequired, adminRequired } = require('../middleware/auth');
-const Post = require('../models/Post');
-const Report = require('../models/Report');
-const User = require('../models/User');
+import { Router } from 'express';
+import { authRequired, adminRequired } from '../middleware/auth.js';
+import Post from '../models/Post.js';
+import Report from '../models/Report.js';
+import User from '../models/User.js';
 
-const router = express.Router();
+const router = Router();
 
 router.use(authRequired, adminRequired);
 
@@ -44,6 +44,6 @@ router.post('/announce', async (req, res) => {
   res.json({ ok: true });
 });
 
-module.exports = router;
+export default router;
 
 

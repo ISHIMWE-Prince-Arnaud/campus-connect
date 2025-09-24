@@ -1,10 +1,9 @@
-const request = require('supertest');
-const express = require('express');
-const jwt = require('jsonwebtoken');
+import request from 'supertest';
+import express from 'express';
+import jwt from 'jsonwebtoken';
 
-const authRoutes = require('../routes/auth');
-const healthRoutes = require('../routes/health');
-const { jwtSecret } = require('../utils/config');
+import authRoutes from '../routes/auth.js';
+import healthRoutes from '../routes/health.js';
 
 const app = express();
 app.use(express.json());
@@ -23,9 +22,7 @@ test('login rejects without body', async () => {
 });
 
 test('token sign/verify works', () => {
-  const token = jwt.sign({ id: 'abc' }, jwtSecret, { expiresIn: '1h' });
-  const decoded = jwt.verify(token, jwtSecret);
+  const token = jwt.sign({ id: 'abc' }, process.env.jwtSecret, { expiresIn: '1h' });
+  const decoded = jwt.verify(token, process.env.jwtSecret);
   expect(decoded.id).toBe('abc');
 });
-
-

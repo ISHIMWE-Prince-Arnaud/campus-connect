@@ -1,18 +1,17 @@
-const { Server } = require('socket.io');
-const jwt = require('jsonwebtoken');
-const { jwtSecret, clientOrigin } = require('./utils/config');
-const Chat = require('./models/Chat');
+import { Server } from 'socket.io';
+import jwt from 'jsonwebtoken';
+import Chat from './models/Chat.js';
 
-function initSocket(httpServer) {
+export function initSocket(httpServer) {
   const io = new Server(httpServer, {
-    cors: { origin: clientOrigin, credentials: true }
+    cors: { origin: process.env.clientOrigin, credentials: true }
   });
 
   io.use((socket, next) => {
     const token = socket.handshake.auth?.token;
     if (!token) return next(new Error('Unauthorized'));
     try {
-      const payload = jwt.verify(token, jwtSecret);
+      const payload = jwt.verify(token, process.env.jwtSecret);
       socket.userId = String(payload.id);
       return next();
     } catch {
@@ -21,7 +20,6 @@ function initSocket(httpServer) {
   });
 
   io.on('connection', (socket) => {
-    // Personal room for notifications
     socket.join(socket.userId);
 
     socket.on('join:chat', async ({ chatId }) => {
@@ -37,7 +35,5 @@ function initSocket(httpServer) {
 
   return io;
 }
-
-module.exports = { initSocket };
 
 

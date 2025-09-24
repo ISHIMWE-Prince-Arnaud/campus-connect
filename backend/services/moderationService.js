@@ -1,8 +1,9 @@
-const xss = require('xss');
-const banned = ['badword','curse']; // minimal placeholder
-const { isValidImageUrl } = require('../utils/image');
+import xss from 'xss';
+import { isValidImageUrl } from '../utils/image.js';
 
-function filterProfanity(text) {
+const banned = ['badword','curse']; // minimal placeholder
+
+export function filterProfanity(text) {
   if (!text) return '';
   let safe = text;
   banned.forEach(w => {
@@ -12,10 +13,8 @@ function filterProfanity(text) {
   return xss(safe);
 }
 
-function validateMediaUrl(url) {
+export function validateMediaUrl(url) {
   return isValidImageUrl(url);
 }
-
-module.exports = { filterProfanity, validateMediaUrl };
 
 

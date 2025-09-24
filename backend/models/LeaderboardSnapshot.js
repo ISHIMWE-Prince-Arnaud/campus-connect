@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const EntrySchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -13,6 +13,6 @@ const LeaderboardSnapshotSchema = new mongoose.Schema({
   entries: [EntrySchema]
 }, { timestamps: true });
 
-module.exports = mongoose.model('LeaderboardSnapshot', LeaderboardSnapshotSchema);
+export default mongoose.model('LeaderboardSnapshot', LeaderboardSnapshotSchema);
 
 
