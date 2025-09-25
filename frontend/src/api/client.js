@@ -25,5 +25,3 @@ export function getStoredToken() {
 }
 
 export default api;
-
-

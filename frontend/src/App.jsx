@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
 import Login from './pages/Login.jsx';
@@ -29,7 +29,7 @@ function App({ socket }) {
           <Route path="/" element={<Navigate to={authed ? '/feed' : '/login'} />} />
           <Route path="/login" element={<Login onLogin={setUser} />} />
           <Route path="/feed" element={authed ? <Feed socket={socket} user={user} /> : <Navigate to="/login" />} />
-          <Route path="/leaderboard" element={<Leaderboard socket={socket} />} />
+          <Route path="/leaderboard" element={authed ? <Leaderboard socket={socket} /> : <Navigate to="/login" />} />
           <Route path="/quests" element={authed ? <Quests user={user} /> : <Navigate to="/login" />} />
           <Route path="/chat/:chatId" element={authed ? <Chat socket={socket} /> : <Navigate to="/login" />} />
           <Route path="/admin" element={authed ? <Admin user={user} /> : <Navigate to="/login" />} />
