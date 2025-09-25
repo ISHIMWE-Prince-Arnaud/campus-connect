@@ -1,4 +1,3 @@
-import React from 'react';
 import { useParams } from 'react-router-dom';
 import ChatRoom from '../components/ChatRoom.jsx';
 
@@ -8,5 +7,3 @@ function Chat({ socket }) {
 }
 
 export default Chat;
-
-

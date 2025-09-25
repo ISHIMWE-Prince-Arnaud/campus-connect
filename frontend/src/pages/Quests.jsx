@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import api from '../api/client.js';
 import QuestCard from '../components/QuestCard.jsx';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 
 function Quests({ user }) {
   const [quests, setQuests] = useState([]);
 
   function load() {
-    api.get('/quests/me').then(res => setQuests(res.data));
+    api.get('/quests/me')
+      .then(res => setQuests(res.data))
+      .catch(e => toast.error(e.response?.data?.error || 'Failed to load quests'));
   }
 
   useEffect(() => { load(); }, []);

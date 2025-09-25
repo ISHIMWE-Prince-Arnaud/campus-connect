@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import api from '../api/client.js';
+import { toast } from 'react-hot-toast';
 
-function Admin({ user }) {
+export function Admin({ user }) {
   const [reports, setReports] = useState([]);
 
   async function load() {
@@ -15,13 +16,23 @@ function Admin({ user }) {
   useEffect(() => { load(); }, []);
 
   async function removePost(id) {
-    await api.post(`/admin/posts/${id}/remove`);
-    load();
+    try {
+      await api.post(`/admin/posts/${id}/remove`);
+      toast.success('Post removed');
+      load();
+    } catch (e) {
+      toast.error(e.response?.data?.error || 'Failed to remove post');
+    }
   }
 
   async function restorePost(id) {
-    await api.post(`/admin/posts/${id}/restore`);
-    load();
+    try {
+      await api.post(`/admin/posts/${id}/restore`);
+      toast.success('Post restored');
+      load();
+    } catch (e) {
+      toast.error(e.response?.data?.error || 'Failed to restore post');
+    }
   }
 
   return (

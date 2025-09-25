@@ -1,9 +1,46 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --radius: 16px;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  @apply font-sans bg-base-200 text-base-content min-h-screen antialiased;
+}
 html, body, #root {
   height: 100%;
+}
+
+/* Utilities */
+.glass {
+  @apply bg-base-100/70 backdrop-blur-md border border-white/10;
+}
+.card-elevated {
+  @apply rounded-xl border border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)];
+}
+.grad-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent;
+}
+.badge-grad {
+  @apply rounded-full bg-gradient-to-r from-primary to-accent text-white font-mono px-3 py-1 text-xs shadow-soft;
+}
+.ring-soft {
+  @apply ring-1 ring-white/10;
+}
+
+/* Focus styles for accessibility */
+.focus-visible {
+  @apply ring-2 ring-primary ring-offset-2 outline-none;
+}
+
+/* Loading skeletons */
+.skeleton {
+  @apply animate-pulse bg-base-300 rounded;
 }
 
 

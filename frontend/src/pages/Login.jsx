@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import api, { setAuthToken } from '../api/client.js';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 
 function Login({ onLogin }) {
   const [isRegister, setIsRegister] = useState(false);
@@ -16,8 +17,9 @@ function Login({ onLogin }) {
       setAuthToken(res.data.token);
       onLogin && onLogin(res.data.user);
       navigate('/feed');
+      toast.success(isRegister ? 'Registration successful!' : 'Login successful!');
     } catch (e) {
-      alert(e.response?.data?.error || 'Auth failed');
+      toast.error(e.response?.data?.error || 'Auth failed');
     }
   }
 
@@ -51,7 +53,6 @@ function Login({ onLogin }) {
               <button className="btn btn-primary" type="submit">{isRegister ? 'Register' : 'Login'}</button>
             </div>
           </form>
-          <div className="text-sm opacity-70">Demo admin: admin / admin123 (after seeding)</div>
         </div>
       </div>
     </div>
