@@ -92,7 +92,7 @@ function PostCard({ post, onReacted, currentUserId }) {
         {post.mediaUrl ? (
           <img src={post.mediaUrl} alt="" className="rounded-xl mt-3 max-h-80 object-cover border border-white/10" />
         ) : null}
-        <div className="flex gap-3 mt-4 sticky bottom-0 z-10">
+        <div className="flex gap-3 mt-4 z-10">
           <Reaction
             icon={FaThumbsUp}
             count={counts.like}
