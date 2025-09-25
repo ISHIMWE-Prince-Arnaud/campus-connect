@@ -83,7 +83,10 @@ function PostCard({ post, onReacted, currentUserId }) {
             {new Date(post.createdAt).toLocaleString()}
           </div>
         </div>
-        <div className="mt-2 whitespace-pre-wrap leading-relaxed text-base-content/90">
+        <div
+          className="mt-2 whitespace-pre-wrap leading-relaxed text-base-content/90 break-words overflow-auto"
+          style={{ wordBreak: 'break-word', maxHeight: '20em' }}
+        >
           {post.content}
         </div>
         {post.mediaUrl ? (
