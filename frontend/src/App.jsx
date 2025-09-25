@@ -17,13 +17,20 @@ import Admin from './pages/Admin.jsx';
 
 function App({ socket }) {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [toasts, setToasts] = useState([]);
 
   useEffect(() => {
     const token = getStoredToken();
-    if (!token) return;
+    if (!token) {
+      setLoading(false);
+      return;
+    }
     setAuthToken(token);
-    api.get('/auth/me').then(res => setUser(res.data)).catch(() => setUser(null));
+    api.get('/auth/me')
+      .then(res => setUser(res.data))
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false));
   }, []);
 
   const authed = !!user;
@@ -40,6 +47,14 @@ function App({ socket }) {
   // useEffect(() => {
   //   if (authed) showToast('Welcome back!', 'success');
   // }, [authed, showToast]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <span className="loading loading-spinner loading-lg text-primary" />
+      </div>
+    );
+  }
 
   return (
     <BrowserRouter>
