@@ -7,6 +7,7 @@ function PostComposer({ onPosted }) {
   const [mediaUrl, setMediaUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState(null);
+  const [imageSource, setImageSource] = useState('url'); // 'url' or 'upload'
   const prompts = [
     "Share a thought or @mention someone...",
     "What's on your mind today?",
@@ -29,22 +30,23 @@ function PostComposer({ onPosted }) {
   async function submit() {
     if (!content.trim()) return;
     setLoading(true);
-    let finalMediaUrl = mediaUrl;
+    let finalMediaUrl = '';
     try {
-      // If a file is selected, upload it first
-      if (file) {
+      if (imageSource === 'upload' && file) {
         const formData = new FormData();
         formData.append('image', file);
-        // You need an endpoint to handle image uploads, e.g. /upload
         const uploadRes = await api.post('/upload', formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
         finalMediaUrl = uploadRes.data.url;
+      } else if (imageSource === 'url' && mediaUrl) {
+        finalMediaUrl = mediaUrl;
       }
       const res = await api.post('/posts', { content, mediaUrl: finalMediaUrl });
       setContent('');
       setMediaUrl('');
       setFile(null);
+      setImageSource('url');
       onPosted && onPosted(res.data);
       toast.success('Post published!');
     } catch (e) {
@@ -59,10 +61,23 @@ function PostComposer({ onPosted }) {
       <div className="card-body">
         <textarea className="textarea textarea-bordered w-full" placeholder={placeholder}
           value={content} onChange={e => setContent(e.target.value)} />
-        <input className="input input-bordered w-full mb-2" placeholder="Optional image URL"
-          value={mediaUrl} onChange={e => setMediaUrl(e.target.value)} />
-        <input type="file" accept="image/*" className="file-input file-input-bordered w-full mb-2"
-          onChange={e => setFile(e.target.files[0])} />
+        <div className="mb-2 flex gap-4 items-center">
+          <label className="flex items-center gap-2">
+            <input type="radio" name="imageSource" value="url" checked={imageSource === 'url'} onChange={() => setImageSource('url')} />
+            <span>Image URL</span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input type="radio" name="imageSource" value="upload" checked={imageSource === 'upload'} onChange={() => setImageSource('upload')} />
+            <span>Upload Image</span>
+          </label>
+        </div>
+        {imageSource === 'url' ? (
+          <input className="input input-bordered w-full mb-2" placeholder="Optional image URL"
+            value={mediaUrl} onChange={e => setMediaUrl(e.target.value)} />
+        ) : (
+          <input type="file" accept="image/*" className="file-input file-input-bordered w-full mb-2"
+            onChange={e => setFile(e.target.files[0])} />
+        )}
         <div className="card-actions justify-end">
           <button className={`btn btn-primary ${loading ? 'loading' : ''}`} onClick={submit}>Post</button>
         </div>
