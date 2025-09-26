@@ -75,8 +75,19 @@ function PostComposer({ onPosted }) {
           <input className="input input-bordered w-full mb-2" placeholder="Optional image URL"
             value={mediaUrl} onChange={e => setMediaUrl(e.target.value)} />
         ) : (
-          <input type="file" accept="image/*" className="file-input file-input-bordered w-full mb-2"
-            onChange={e => setFile(e.target.files[0])} />
+          <>
+            <input type="file" accept="image/*" className="file-input file-input-bordered w-full mb-2"
+              onChange={e => setFile(e.target.files[0])} />
+            {file && (
+              <div className="mb-2">
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt="Preview"
+                  style={{ maxWidth: '120px', maxHeight: '120px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+                />
+              </div>
+            )}
+          </>
         )}
         <div className="card-actions justify-end">
           <button className={`btn btn-primary ${loading ? 'loading' : ''}`} onClick={submit}>Post</button>
