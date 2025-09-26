@@ -11,6 +11,10 @@ import Report from "../models/Report.js";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
 import { awardPointsToUser, POINTS } from "../services/pointsService.js";
+import {
+  filterProfanity,
+  validateMediaUrl,
+} from "../services/moderationService.js";
 
 function parseMentions(text) {
   // Extracts all @username mentions from text and returns array of usernames

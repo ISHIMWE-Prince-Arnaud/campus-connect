@@ -3,7 +3,7 @@ import api from '../api/client.js';
 import { FiUser, FiUserCheck, FiLock, FiImage, FiMail } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
 
-function Profile() {
+function Profile({ setUser }) {
   const [form, setForm] = useState({ username: '', displayName: '', password: '', avatarUrl: '', gender: 'other', email: '' });
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState('');
@@ -39,9 +39,10 @@ function Profile() {
       const body = { ...form, avatarUrl };
       if (!body.password) delete body.password;
       const res = await api.put('/profile/me', body);
-      setForm({ ...form, ...res.data, password: '' });
-      setAvatarPreview(res.data.avatarUrl || '');
-      toast.success('Profile updated!');
+  setForm({ ...form, ...res.data, password: '' });
+  setAvatarPreview(res.data.avatarUrl || '');
+  toast.success('Profile updated!');
+  if (setUser) setUser(res.data);
     } catch (e) {
       toast.error(e.response?.data?.error || 'Update failed');
     }

@@ -30,15 +30,23 @@ router.get("/me", authRequired, async (req, res) => {
 router.put("/me", authRequired, async (req, res) => {
   try {
     const updates = {};
-    if (req.body.username) updates.username = sanitize(req.body.username);
-    if (req.body.displayName) updates.displayName = req.body.displayName;
-    if (req.body.avatarUrl) updates.avatarUrl = req.body.avatarUrl;
-    if (req.body.gender) updates.gender = req.body.gender;
-    if (req.body.password) {
+    if (Object.prototype.hasOwnProperty.call(req.body, "username"))
+      updates.username = sanitize(req.body.username);
+    if (Object.prototype.hasOwnProperty.call(req.body, "displayName"))
+      updates.displayName = req.body.displayName;
+    if (Object.prototype.hasOwnProperty.call(req.body, "avatarUrl"))
+      updates.avatarUrl = req.body.avatarUrl;
+    if (Object.prototype.hasOwnProperty.call(req.body, "gender"))
+      updates.gender = req.body.gender;
+    if (Object.prototype.hasOwnProperty.call(req.body, "email"))
+      updates.email = sanitize(req.body.email);
+    if (Object.prototype.hasOwnProperty.call(req.body, "password")) {
       updates.passwordHash = await bcrypt.hash(req.body.password, 10);
     }
     const user = await User.findByIdAndUpdate(req.user._id, updates, {
       new: true,
+      runValidators: true,
+      context: "query",
     });
     res.json({
       username: user.username,

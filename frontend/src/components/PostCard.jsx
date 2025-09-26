@@ -61,8 +61,8 @@ function PostCard({ post, onReacted, currentUserId }) {
           <div className="avatar">
             <div className="w-10 h-10 rounded-full overflow-hidden border">
               <img
-                src={post.author?.avatarUrl || `https://ui-avatars.com/api/?name=${post.author?.displayName || post.author?.username}`}
-                alt="Profile"
+                src={post.author?.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(post.author?.displayName || post.author?.username || '')}`}
+                alt={`${post.author?.displayName || post.author?.username ? `${post.author?.displayName || post.author?.username}'s avatar` : 'Author avatar'}`}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -93,17 +93,14 @@ function PostCard({ post, onReacted, currentUserId }) {
         >
           {post.content}
         </div>
-        {Array.isArray(post.mediaUrls) && post.mediaUrls.length > 0 ? (
+        {post.mediaUrl ? (
           <div className="flex gap-2 mt-3 flex-wrap w-full items-center justify-center">
-            {post.mediaUrls.map((url, idx) => (
-              <img
-                key={idx}
-                src={url}
-                alt={`Post image ${idx + 1}`}
-                className="rounded-xl max-h-80 object-cover border border-white/10"
-                style={{ maxWidth: '200px' }}
-              />
-            ))}
+            <img
+              src={post.mediaUrl}
+              alt="Post image"
+              className="rounded-xl max-h-80 object-cover border border-white/10"
+              style={{ maxWidth: '200px' }}
+            />
           </div>
         ) : null}
         <div className="flex gap-3 mt-4 z-10 items-center justify-center">
