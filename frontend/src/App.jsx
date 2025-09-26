@@ -74,7 +74,7 @@ function App({ socket }) {
           <Route path="/quests" element={authed ? <Quests user={user} /> : <Navigate to="/login" />} />
           <Route path="/chat/:chatId" element={authed ? <Chat socket={socket} /> : <Navigate to="/login" />} />
           <Route path="/admin" element={authed ? <Admin user={user} /> : <Navigate to="/login" />} />
-          <Route path="/profile" element={authed ? <Profile setUser={setUser} /> : <Navigate to="/login" />} />
+          <Route path="/profile" element={authed ? <Profile user={user} setUser={setUser} /> : <Navigate to="/login" />} />
           <Route path="*" element={<div className="p-8 text-center"><Link to="/" className="btn">Home</Link></div>} />
         </Routes>
       </div>

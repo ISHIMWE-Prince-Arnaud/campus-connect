@@ -99,7 +99,7 @@ function PostCard({ post, onReacted, currentUserId }) {
               src={post.mediaUrl}
               alt="Post image"
               className="rounded-xl max-h-80 object-cover border border-white/10"
-              style={{ maxWidth: '200px' }}
+              style={{ maxWidth: '100%', height: 'auto', objectFit: 'cover' }}
             />
           </div>
         ) : null}

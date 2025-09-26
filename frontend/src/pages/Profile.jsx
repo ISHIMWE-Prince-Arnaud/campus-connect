@@ -42,7 +42,7 @@ function Profile({ setUser }) {
   setForm({ ...form, ...res.data, password: '' });
   setAvatarPreview(res.data.avatarUrl || '');
   toast.success('Profile updated!');
-  if (setUser) setUser(res.data);
+  if (setUser) setUser(prev => ({ ...prev, ...res.data }));
     } catch (e) {
       toast.error(e.response?.data?.error || 'Update failed');
     }

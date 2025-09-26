@@ -41,7 +41,17 @@ router.put("/me", authRequired, async (req, res) => {
     if (Object.prototype.hasOwnProperty.call(req.body, "email"))
       updates.email = sanitize(req.body.email);
     if (Object.prototype.hasOwnProperty.call(req.body, "password")) {
-      updates.passwordHash = await bcrypt.hash(req.body.password, 10);
+      const password = req.body.password;
+      if (
+        typeof password !== "string" ||
+        !password.trim() ||
+        password.trim().length < 6
+      ) {
+        return res
+          .status(400)
+          .json({ error: "Password must be at least 6 characters." });
+      }
+      updates.passwordHash = await bcrypt.hash(password, 10);
     }
     const user = await User.findByIdAndUpdate(req.user._id, updates, {
       new: true,

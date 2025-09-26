@@ -87,7 +87,13 @@ router.post("/:id/react", authRequired, async (req, res) => {
       post.reactions.push({ user: req.user._id, type });
       await awardPointsToUser(req.user._id, POINTS.POST_REACT, "React to post");
     }
-    applyReactionCounts(post);
+    // Inline reaction count calculation
+    post.reactionCounts = { like: 0, laugh: 0, fire: 0, relatable: 0 };
+    post.reactions.forEach((r) => {
+      if (post.reactionCounts.hasOwnProperty(r.type)) {
+        post.reactionCounts[r.type] += 1;
+      }
+    });
     await post.save();
     req.app.get("io").emit("post:reacted", {
       postId: String(post._id),

@@ -30,15 +30,16 @@ router.post("/register", async (req, res) => {
     });
     await awardPointsToUser(doc._id, POINTS.STREAK_LOGIN, "Join bonus");
     const refreshedUser = await User.findById(doc._id);
+    const userToReturn = refreshedUser || doc;
     res.json({
       token,
       user: {
-        id: refreshedUser._id,
-        username: refreshedUser.username,
-        displayName: refreshedUser.displayName,
-        avatarUrl: refreshedUser.avatarUrl,
-        roles: refreshedUser.roles,
-        points: refreshedUser.points,
+        id: userToReturn._id,
+        username: userToReturn.username,
+        displayName: userToReturn.displayName,
+        avatarUrl: userToReturn.avatarUrl,
+        roles: userToReturn.roles,
+        points: userToReturn.points,
       },
     });
   } catch (e) {
