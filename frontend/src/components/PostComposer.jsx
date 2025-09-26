@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'react-hot-toast';
 import api from '../api/client.js';
 
 function PostComposer({ onPosted }) {
@@ -14,8 +15,9 @@ function PostComposer({ onPosted }) {
       setContent('');
       setMediaUrl('');
       onPosted && onPosted(res.data);
+      toast.success('Post published!');
     } catch (e) {
-      alert(e.response?.data?.error || 'Failed to post');
+      toast.error(e.response?.data?.error || 'Failed to post');
     } finally {
       setLoading(false);
     }
