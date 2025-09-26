@@ -35,10 +35,11 @@ export function Navbar({ user, onLogout }) {
           Campus Connect
           <span className="badge badge-grad ml-2">beta</span>
         </Link>
-        <Link to="/feed" className={`btn btn-ghost ${location.pathname === '/feed' ? 'btn-active' : ''}`}>Feed</Link>
-        <Link to="/leaderboard" className={`btn btn-ghost ${location.pathname === '/leaderboard' ? 'btn-active' : ''}`}>Leaderboard</Link>
-        <Link to="/quests" className={`btn btn-ghost ${location.pathname === '/quests' ? 'btn-active' : ''}`}>Quests</Link>
-        {user?.roles?.includes('admin') && <Link to="/admin" className={`btn btn-ghost ${location.pathname === '/admin' ? 'btn-active' : ''}`}>Admin</Link>}
+  <Link to="/feed" className={`btn btn-ghost ${location.pathname === '/feed' ? 'btn-active' : ''}`}>Feed</Link>
+  <Link to="/leaderboard" className={`btn btn-ghost ${location.pathname === '/leaderboard' ? 'btn-active' : ''}`}>Leaderboard</Link>
+  <Link to="/quests" className={`btn btn-ghost ${location.pathname === '/quests' ? 'btn-active' : ''}`}>Quests</Link>
+  {/* Remove Profile button, show avatar in top right */}
+  {user?.roles?.includes('admin') && <Link to="/admin" className={`btn btn-ghost ${location.pathname === '/admin' ? 'btn-active' : ''}`}>Admin</Link>}
       </div>
       <div className="flex-none gap-3 items-center">
         <button
@@ -53,15 +54,28 @@ export function Navbar({ user, onLogout }) {
             <span className="badge badge-grad font-mono text-sm px-3 py-1">Points: {user.points ?? 0}</span>
           ) : null}
         </div>
-        <div className="dropdown dropdown-end">
-          <label tabIndex={0} className="btn btn-ghost btn-circle">
-            {theme === 'devcamp' ? <FaMoon className="text-lg" /> : theme === 'light' ? <FaSun className="text-lg" /> : <FaMoon className="text-lg opacity-70" />}
-          </label>
-          <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-36">
-            <li><button onClick={() => setTheme('devcamp')}>Dark</button></li>
-            <li><button onClick={() => setTheme('light')}>Light</button></li>
-            <li><button onClick={() => setTheme('system')}>System</button></li>
-          </ul>
+        <div className="flex items-center gap-2">
+          <div className="dropdown dropdown-end">
+            <label tabIndex={0} className="btn btn-ghost btn-circle">
+              {theme === 'devcamp' ? <FaMoon className="text-lg" /> : theme === 'light' ? <FaSun className="text-lg" /> : <FaMoon className="text-lg opacity-70" />}
+            </label>
+            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-36">
+              <li><button onClick={() => setTheme('devcamp')}>Dark</button></li>
+              <li><button onClick={() => setTheme('light')}>Light</button></li>
+              <li><button onClick={() => setTheme('system')}>System</button></li>
+            </ul>
+          </div>
+          {user && (
+            <Link to="/profile" className="btn btn-ghost btn-circle avatar">
+              <div className="w-10 h-10 rounded-full overflow-hidden border">
+                <img
+                  src={user.avatarUrl || `https://ui-avatars.com/api/?name=${user.displayName || user.username}`}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </Link>
+          )}
         </div>
         {user ? (
           <motion.button

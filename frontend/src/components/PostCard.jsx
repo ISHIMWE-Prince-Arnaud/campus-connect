@@ -58,9 +58,13 @@ function PostCard({ post, onReacted, currentUserId }) {
     >
       <div className="card-body">
         <div className="flex items-center gap-3 mb-2">
-          <div className="avatar placeholder">
-            <div className="bg-neutral text-neutral-content rounded-full w-10 font-display text-lg">
-              <span>{post.author?.displayName?.[0] || '?'}</span>
+          <div className="avatar">
+            <div className="w-10 h-10 rounded-full overflow-hidden border">
+              <img
+                src={post.author?.avatarUrl || `https://ui-avatars.com/api/?name=${post.author?.displayName || post.author?.username}`}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
           <div className="font-semibold text-base-content text-lg">
@@ -102,7 +106,7 @@ function PostCard({ post, onReacted, currentUserId }) {
             ))}
           </div>
         ) : null}
-        <div className="flex gap-3 mt-4 z-10">
+        <div className="flex gap-3 mt-4 z-10 items-center justify-center">
           <Reaction
             icon={FaThumbsUp}
             count={counts.like}

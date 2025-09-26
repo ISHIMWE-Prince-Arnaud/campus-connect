@@ -1,20 +1,29 @@
 import { useState } from 'react';
-import { FiEye, FiEyeOff, FiUser, FiMail, FiLock, FiUserCheck } from 'react-icons/fi';
 import api, { setAuthToken } from '../api/client.js';
+import { FiEye, FiEyeOff, FiUser, FiMail, FiLock, FiUserCheck, FiImage } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 function Login({ onLogin }) {
   const [isRegister, setIsRegister] = useState(false);
-  const [form, setForm] = useState({ username: '', email: '', password: '', displayName: '', gender: 'other' });
+  const [form, setForm] = useState({ username: '', email: '', password: '', displayName: '', gender: 'other', avatarUrl: '' });
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   async function submit(e) {
     e.preventDefault();
     try {
+      let avatarUrl = form.avatarUrl;
+      if (isRegister && avatarFile) {
+        const data = new FormData();
+        data.append('image', avatarFile);
+        const res = await api.post('/upload', data);
+        avatarUrl = res.data.url;
+      }
       const url = isRegister ? '/auth/register' : '/auth/login';
-      const body = isRegister ? form : { username: form.username, password: form.password };
+      const body = isRegister ? { ...form, avatarUrl } : { username: form.username, password: form.password };
       const res = await api.post(url, body);
       setAuthToken(res.data.token);
       onLogin && onLogin(res.data.user);
@@ -53,6 +62,28 @@ function Login({ onLogin }) {
                   <option value="female">female</option>
                   <option value="other">other</option>
                 </select>
+                <div className="relative flex items-center gap-2 mt-2">
+                  <span className="text-gray-400"><FiImage /></span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="file-input file-input-bordered"
+                    onChange={e => {
+                      const file = e.target.files[0];
+                      setAvatarFile(file);
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onload = ev => setAvatarPreview(ev.target.result);
+                        reader.readAsDataURL(file);
+                      } else {
+                        setAvatarPreview('');
+                      }
+                    }}
+                  />
+                  {avatarPreview && (
+                    <img src={avatarPreview} alt="Avatar preview" className="w-10 h-10 rounded-full object-cover border ml-2" />
+                  )}
+                </div>
               </>
             )}
             <div className="relative">

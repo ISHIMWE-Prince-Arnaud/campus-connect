@@ -21,6 +21,7 @@ import leaderboardRoutes from "./routes/leaderboard.js";
 import adminRoutes from "./routes/admin.js";
 import healthRoutes from "./routes/health.js";
 import uploadRoute from "./routes/upload.js";
+import profileRouter from "./routes/profile.js";
 import { configDotenv } from "dotenv";
 
 const app = express();
@@ -50,6 +51,7 @@ app.use("/api/leaderboard", leaderboardRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api", healthRoutes);
 app.use("/api/upload", uploadRoute);
+app.use("/api/profile", profileRouter);
 
 app.use(errorHandler);
 

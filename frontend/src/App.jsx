@@ -13,6 +13,7 @@ import Quests from './pages/Quests.jsx';
 import Chat  from './pages/Chat.jsx';
 import Leaderboard from './pages/Leaderboard.jsx';
 import Admin from './pages/Admin.jsx';
+import Profile from './pages/Profile.jsx';
 
 
 function App({ socket }) {
@@ -73,6 +74,7 @@ function App({ socket }) {
           <Route path="/quests" element={authed ? <Quests user={user} /> : <Navigate to="/login" />} />
           <Route path="/chat/:chatId" element={authed ? <Chat socket={socket} /> : <Navigate to="/login" />} />
           <Route path="/admin" element={authed ? <Admin user={user} /> : <Navigate to="/login" />} />
+          <Route path="/profile" element={authed ? <Profile /> : <Navigate to="/login" />} />
           <Route path="*" element={<div className="p-8 text-center"><Link to="/" className="btn">Home</Link></div>} />
         </Routes>
       </div>
