@@ -6,6 +6,7 @@ function PostComposer({ onPosted }) {
   const [content, setContent] = useState('');
   const [mediaUrl, setMediaUrl] = useState('');
   const [loading, setLoading] = useState(false);
+  const [file, setFile] = useState(null);
   const prompts = [
     "Share a thought or @mention someone...",
     "What's on your mind today?",
@@ -28,10 +29,22 @@ function PostComposer({ onPosted }) {
   async function submit() {
     if (!content.trim()) return;
     setLoading(true);
+    let finalMediaUrl = mediaUrl;
     try {
-      const res = await api.post('/posts', { content, mediaUrl });
+      // If a file is selected, upload it first
+      if (file) {
+        const formData = new FormData();
+        formData.append('image', file);
+        // You need an endpoint to handle image uploads, e.g. /upload
+        const uploadRes = await api.post('/upload', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        finalMediaUrl = uploadRes.data.url;
+      }
+      const res = await api.post('/posts', { content, mediaUrl: finalMediaUrl });
       setContent('');
       setMediaUrl('');
+      setFile(null);
       onPosted && onPosted(res.data);
       toast.success('Post published!');
     } catch (e) {
@@ -46,8 +59,10 @@ function PostComposer({ onPosted }) {
       <div className="card-body">
         <textarea className="textarea textarea-bordered w-full" placeholder={placeholder}
           value={content} onChange={e => setContent(e.target.value)} />
-        <input className="input input-bordered w-full" placeholder="Optional image URL"
+        <input className="input input-bordered w-full mb-2" placeholder="Optional image URL"
           value={mediaUrl} onChange={e => setMediaUrl(e.target.value)} />
+        <input type="file" accept="image/*" className="file-input file-input-bordered w-full mb-2"
+          onChange={e => setFile(e.target.files[0])} />
         <div className="card-actions justify-end">
           <button className={`btn btn-primary ${loading ? 'loading' : ''}`} onClick={submit}>Post</button>
         </div>
