@@ -74,12 +74,11 @@ function Profile() {
               <input className="input input-bordered w-full pl-10" placeholder="New password" type="password"
                 value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
             </div>
-            <div className="relative flex items-center gap-2 mt-2">
-              <span className="text-gray-400"><FiImage /></span>
+            <div className="relative flex items-center gap-2 mt-2 justify-center">
               <input
                 type="file"
                 accept="image/*"
-                className="file-input file-input-bordered"
+                className="file-input file-input-bordered w-[85%]"
                 onChange={e => {
                   const file = e.target.files[0];
                   setAvatarFile(file);
