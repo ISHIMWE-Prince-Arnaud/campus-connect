@@ -6,7 +6,7 @@ function PostComposer({ onPosted }) {
   const [content, setContent] = useState('');
   const [mediaUrl, setMediaUrl] = useState('');
   const [loading, setLoading] = useState(false);
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]);
   const [imageSource, setImageSource] = useState('url'); // 'url' or 'upload'
   const prompts = [
     "Share a thought or @mention someone...",
@@ -30,22 +30,24 @@ function PostComposer({ onPosted }) {
   async function submit() {
     if (!content.trim()) return;
     setLoading(true);
-    let finalMediaUrl = '';
+    let finalMediaUrls = [];
     try {
-      if (imageSource === 'upload' && file) {
-        const formData = new FormData();
-        formData.append('image', file);
-        const uploadRes = await api.post('/upload', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-        finalMediaUrl = uploadRes.data.url;
+      if (imageSource === 'upload' && files.length > 0) {
+        for (const file of files) {
+          const formData = new FormData();
+          formData.append('image', file);
+          const uploadRes = await api.post('/upload', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          });
+          finalMediaUrls.push(uploadRes.data.url);
+        }
       } else if (imageSource === 'url' && mediaUrl) {
-        finalMediaUrl = mediaUrl;
+        finalMediaUrls = [mediaUrl];
       }
-      const res = await api.post('/posts', { content, mediaUrl: finalMediaUrl });
+      const res = await api.post('/posts', { content, mediaUrls: finalMediaUrls });
       setContent('');
       setMediaUrl('');
-      setFile(null);
+      setFiles([]);
       setImageSource('url');
       onPosted && onPosted(res.data);
       toast.success('Post published!');
@@ -72,19 +74,40 @@ function PostComposer({ onPosted }) {
           </label>
         </div>
         {imageSource === 'url' ? (
-          <input className="input input-bordered w-full mb-2" placeholder="Optional image URL"
-            value={mediaUrl} onChange={e => setMediaUrl(e.target.value)} />
+          <input
+            className="input input-bordered w-full mb-2"
+            placeholder="Optional image URL"
+            value={mediaUrl}
+            onChange={e => setMediaUrl(e.target.value)}
+          />
         ) : (
           <>
-            <input type="file" accept="image/*" className="file-input file-input-bordered w-full mb-2"
-              onChange={e => setFile(e.target.files[0])} />
-            {file && (
-              <div className="mb-2">
-                <img
-                  src={URL.createObjectURL(file)}
-                  alt="Preview"
-                  style={{ maxWidth: '120px', maxHeight: '120px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
-                />
+            <div className="mb-2">
+              <input
+                id="file-upload"
+                type="file"
+                accept="image/*"
+                multiple
+                style={{ display: 'none' }}
+                onChange={e => setFiles(Array.from(e.target.files))}
+              />
+              <label htmlFor="file-upload" className="btn btn-primary btn-sm cursor-pointer flex items-center gap-2">
+                <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/><polyline points="16 10 12 6 8 10"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
+                Choose Image
+              </label>
+            </div>
+            {files.length > 0 && (
+              <div className="mb-2 flex gap-2 flex-wrap p-2 bg-base-200 rounded-lg border border-base-300 items-center justify-center">
+                {files.map((file, idx) => (
+                  <div key={idx} className="relative group">
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt={`Preview ${idx + 1}`}
+                      className="rounded-lg shadow border border-base-300 object-cover"
+                      style={{ width: '100px', height: '100px' }}
+                    />
+                  </div>
+                ))}
               </div>
             )}
           </>

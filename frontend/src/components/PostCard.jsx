@@ -89,8 +89,18 @@ function PostCard({ post, onReacted, currentUserId }) {
         >
           {post.content}
         </div>
-        {post.mediaUrl ? (
-          <img src={post.mediaUrl} alt="" className="rounded-xl mt-3 max-h-80 object-cover border border-white/10" />
+        {Array.isArray(post.mediaUrls) && post.mediaUrls.length > 0 ? (
+          <div className="flex gap-2 mt-3 flex-wrap w-full items-center justify-center">
+            {post.mediaUrls.map((url, idx) => (
+              <img
+                key={idx}
+                src={url}
+                alt={`Post image ${idx + 1}`}
+                className="rounded-xl max-h-80 object-cover border border-white/10"
+                style={{ maxWidth: '200px' }}
+              />
+            ))}
+          </div>
         ) : null}
         <div className="flex gap-3 mt-4 z-10">
           <Reaction
