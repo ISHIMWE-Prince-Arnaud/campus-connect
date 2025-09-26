@@ -6,7 +6,7 @@ function PostComposer({ onPosted }) {
   const [content, setContent] = useState('');
   const [mediaUrl, setMediaUrl] = useState('');
   const [loading, setLoading] = useState(false);
-  const [files, setFiles] = useState([]);
+  const [file, setFile] = useState(null);
   const [imageSource, setImageSource] = useState('url'); // 'url' or 'upload'
   const prompts = [
     "Share a thought or @mention someone...",
@@ -30,24 +30,22 @@ function PostComposer({ onPosted }) {
   async function submit() {
     if (!content.trim()) return;
     setLoading(true);
-    let finalMediaUrls = [];
+    let finalMediaUrl = '';
     try {
-      if (imageSource === 'upload' && files.length > 0) {
-        for (const file of files) {
-          const formData = new FormData();
-          formData.append('image', file);
-          const uploadRes = await api.post('/upload', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
-          });
-          finalMediaUrls.push(uploadRes.data.url);
-        }
+      if (imageSource === 'upload' && file) {
+        const formData = new FormData();
+        formData.append('image', file);
+        const uploadRes = await api.post('/upload', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        finalMediaUrl = uploadRes.data.url;
       } else if (imageSource === 'url' && mediaUrl) {
-        finalMediaUrls = [mediaUrl];
+        finalMediaUrl = mediaUrl;
       }
-      const res = await api.post('/posts', { content, mediaUrls: finalMediaUrls });
+      const res = await api.post('/posts', { content, mediaUrl: finalMediaUrl });
       setContent('');
       setMediaUrl('');
-      setFiles([]);
+      setFile(null);
       setImageSource('url');
       onPosted && onPosted(res.data);
       toast.success('Post published!');
@@ -87,27 +85,22 @@ function PostComposer({ onPosted }) {
                 id="file-upload"
                 type="file"
                 accept="image/*"
-                multiple
                 style={{ display: 'none' }}
-                onChange={e => setFiles(Array.from(e.target.files))}
+                onChange={e => setFile(e.target.files[0])}
               />
               <label htmlFor="file-upload" className="btn btn-primary btn-sm cursor-pointer flex items-center gap-2">
                 <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/><polyline points="16 10 12 6 8 10"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
                 Choose Image
               </label>
             </div>
-            {files.length > 0 && (
+            {file && (
               <div className="mb-2 flex gap-2 flex-wrap p-2 bg-base-200 rounded-lg border border-base-300 items-center justify-center">
-                {files.map((file, idx) => (
-                  <div key={idx} className="relative group">
-                    <img
-                      src={URL.createObjectURL(file)}
-                      alt={`Preview ${idx + 1}`}
-                      className="rounded-lg shadow border border-base-300 object-cover"
-                      style={{ width: '100px', height: '100px' }}
-                    />
-                  </div>
-                ))}
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt="Preview"
+                  className="rounded-lg shadow border border-base-300 object-cover"
+                  style={{ width: '100px', height: '100px' }}
+                />
               </div>
             )}
           </>

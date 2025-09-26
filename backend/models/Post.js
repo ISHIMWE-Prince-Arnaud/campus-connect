@@ -12,7 +12,7 @@ const PostSchema = new mongoose.Schema(
   {
     author: { type: mongoose.Schema.Types.ObjectId, ref: "User", index: true },
     content: String,
-    mediaUrls: { type: [String], default: [] },
+    mediaUrl: String,
     mentions: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     reactions: { type: [ReactionSchema], default: [] },
     reactionCounts: {

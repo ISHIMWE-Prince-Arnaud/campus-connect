@@ -16,7 +16,7 @@ export const loginSchema = Joi.object({
 
 export const createPostSchema = Joi.object({
   content: Joi.string().min(1).max(500).required(),
-  mediaUrls: Joi.array().items(Joi.string().uri()).max(10).default([]),
+  mediaUrl: Joi.string().uri().allow(""),
 });
 
 export const reactSchema = Joi.object({
